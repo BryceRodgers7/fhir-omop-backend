@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(printenv SUPADATABASE_URL)",
+      "Bash(python -m venv .venv)",
+      "Bash(c:/git/fhir-omop-backend/.venv/Scripts/python.exe -m pip install --disable-pip-version-check -q -r c:/git/fhir-omop-backend/requirements.txt)",
+      "Bash(c:/git/fhir-omop-backend/.venv/Scripts/python.exe *)",
+      "Bash(curl *)",
+      "Bash(python -c \"import sys, json; d=json.load\\(sys.stdin\\); print\\('summary:', d['summary']\\); print\\('mapping_success_rate:', d['mapping_success_rate']\\); print\\('omop_tables keys:', list\\(d['omop_tables'].keys\\(\\)\\)\\); print\\('analytics keys:', list\\(d['analytics'].keys\\(\\)\\)\\)\")"
+    ]
+  }
+}
