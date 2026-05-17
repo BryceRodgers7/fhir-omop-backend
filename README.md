@@ -4,7 +4,7 @@ Small FastAPI service that owns all database I/O for the FHIR → OMOP demo.
 The Streamlit portfolio page is a dumb HTTP client; this service holds the
 Supabase connection, runs the transforms, and exposes a stable JSON surface.
 
-See [`FHIR_OMOP_BACKEND_PLAN.md`](FHIR_OMOP_BACKEND_PLAN.md) for the full design.
+See [`ARCHITECTURE.md`](ARCHITECTURE.md) for the full design.
 
 ## Quick start
 

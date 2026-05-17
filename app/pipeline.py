@@ -31,16 +31,21 @@ logger = logging.getLogger(__name__)
 # Listed children-before-parents so TRUNCATE works even without CASCADE
 # chasing. CASCADE is still used in the SQL because of the FK chain through
 # ingestion_run + person.
-FHIR_DEMO_TABLES_IN_RESET_ORDER: List[str] = [
+OMOP_TABLES_IN_RESET_ORDER: List[str] = [
     "fhir_demo_code_mapping_report",
     "fhir_demo_drug_exposure",
     "fhir_demo_measurement",
     "fhir_demo_condition_occurrence",
     "fhir_demo_visit_occurrence",
     "fhir_demo_person",
+]
+RAW_TABLES_IN_RESET_ORDER: List[str] = [
     "fhir_demo_raw_fhir_resource",
     "fhir_demo_ingestion_run",
 ]
+FHIR_DEMO_TABLES_IN_RESET_ORDER: List[str] = (
+    OMOP_TABLES_IN_RESET_ORDER + RAW_TABLES_IN_RESET_ORDER
+)
 
 
 # ---------------------------------------------------------------------------
@@ -158,6 +163,15 @@ def run_transform(conn) -> Dict[str, int]:
     person_lookup: Dict[str, int] = {}
 
     with conn.cursor() as cur:
+        # Rebuild semantics: OMOP-side tables are a deterministic projection
+        # of the raw landing zone, so wipe them first and re-derive. Raw and
+        # ingestion_run are append-only history and stay intact.
+        cur.execute(
+            "TRUNCATE TABLE "
+            + ", ".join(OMOP_TABLES_IN_RESET_ORDER)
+            + " RESTART IDENTITY CASCADE;"
+        )
+
         grouped = _fetch_raw_grouped(cur)
         logger.info(
             "run_transform: starting (Patient=%d, Encounter=%d, Condition=%d, "
